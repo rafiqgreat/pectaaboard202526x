@@ -1,0 +1,1 @@
+[18-Feb-2024 21:18:05 Asia/Karachi] PHP Fatal error:  Allowed memory size of 536870912 bytes exhausted (tried to allocate 12288 bytes) in /home/educationservice/finaltermsba2324.educationservices.pk/system/database/drivers/mysqli/mysqli_result.php on line 214

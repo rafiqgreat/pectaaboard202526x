@@ -1,0 +1,297 @@
+<!-- DataTables -->
+<link rel="stylesheet" href="<?= base_url() ?>assets/plugins/datatables/dataTables.bootstrap4.css"> 
+<style>
+.dropbtn {
+  background-color: #04AA6D;
+  color: white;
+  padding: 5px 8px;
+  font-size: 14px;
+  border: none;
+  margin: 3px;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 6px 10px;
+  text-decoration: none;
+  display: block;
+  font-size: 14px;
+}
+
+.dropdown-content a:hover {background-color: #ddd;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropbtn {background-color: #3e8e41;}
+</style>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <section class="content">
+    <!-- For Messages -->
+    <?php $this->load->view('admin/includes/_messages.php') ?>
+    <div class="card">
+      <div class="card-header">
+        <div class="d-inline-block">
+          <h3 class="card-title"><i class="fa fa-list"></i>&nbsp; Generate Pilot Papers</h3>
+        </div>        
+      </div>
+    </div>
+	  
+    <div class="card">
+		<div class="d-inline-block row" >
+          <h3 class="card-title">&nbsp;&nbsp;&nbsp;&nbsp;	<strong>Paper Statistics</strong></h3>
+        </div>
+      <div class="card-body">
+		<table id="na_datatable" class="table table-bordered table-striped" width="100%" style="border:double; color:#000">
+          <thead>
+            <tr>
+              <th>Grade</th>
+              <th>Subjects</th>
+              <th>Pilot Items</th>
+              <th>Pilot MCQs</th>
+              <th>Pilot CRQs</th>              
+              <th>Pilot Paragraphs</th>  
+			  <th>Pilot Groups</th>
+			  <th>MCQs Paper</th>
+			  <th>CRQs Paper</th>
+             <?php /*?> <th>Versions</th>            
+              <th style="width:12%">Generate Papers<br>(Click Below)</th><?php */?>
+            </tr>
+          </thead>
+            <tbody>
+            <?php 
+			$group_item = 0;
+			$Pilot_Items=$MCQ_Items=$CRQ_Items=$Pilot_Groups=$Pilot_Paragraphs=0;
+			foreach ($records as $row){
+                ?>
+                <tr>
+                  <td><?php echo $row['Grade'];?></td>
+                  <td><?php echo $row['subject_name_en'];?></td>
+                  <td><?php echo $row['Pilot_Items']; $Pilot_Items+=$row['Pilot_Items'];?></td>
+                  <td><?php echo $row['MCQ_Items']; $MCQ_Items+=$row['MCQ_Items'];?></td>
+                  <td><?php echo $row['CRQ_Items']; $CRQ_Items+=$row['CRQ_Items'];?></td>                  
+                  <td><?php echo $row['Pilot_Paragraphs']; $Pilot_Paragraphs+=$row['Pilot_Paragraphs'];?></td>
+                  <td><?php echo $row['Pilot_Groups']; $Pilot_Groups+=$row['Pilot_Groups'];?></td>
+				  <td>
+					  <?php 
+						$para_subjects = [4,8,12,18,25,31,39,47,5,9,13,19,26,32,40,48];
+						//if(in_array($row['c_subject_id'],$para_subjects)){}
+					  ?>
+					<?php 
+					if($row['MCQ_Items'] != 0){
+						if(in_array($row['item_subject_id'], $mcqpapersubjectids)){?>
+						  <span style="color:#17a2b8;">Generated</span>&nbsp; <a title="Delete" class="delete btn btn-sm btn-danger" href="<?php print base_url('admin/pilotpaper/deletepapermcq/'.$row['item_subject_id']);?>" onclick="return confirm('Do you want to delete ?')"> <i class="fa fa-trash-o"></i></a>
+						<?php  
+						}
+						else
+						{ ?>  
+						<?php echo form_open(base_url('admin/pilotpaper/generatemcqs'), 'class="form-horizontal" name="frm_mcqs"');  ?>
+							<div class="form-group">
+								<div class="col-md-12">
+									<label for="" class="col-sm-12 control-label">No of Versions Per Phase</label>
+									<select name="noofversions" class="form-control form-group">
+										<option value="1">1</option>
+										<option value="2">2</option>
+										<option value="3">3</option>
+										<option value="4">4</option>
+										<option value="5">5</option>
+										<option value="6">6</option>
+										<option value="7">7</option>
+										<option value="8">8</option>
+										<option value="9">9</option>
+										<option value="10">10</option>
+									</select>
+									<input type="hidden" name="gradeid" value="<?php print $row['Grade']+2; ?>" >
+									<input type="hidden" name="subjectid" value="<?php print $row['item_subject_id']; ?>">
+									<input type="hidden" name="Pilot_Paragraphs" value="<?php print $row['Pilot_Paragraphs']; ?>">
+									<input type="hidden" name="MCQ_Items" value="<?php print $row['MCQ_Items']; ?>">
+									<input type="submit" name="submit" value="Generate" class="btn btn-info pull-right">
+								</div>
+							</div>
+						<?php echo form_close( ); ?>  
+					<?php }
+					}
+					  else{
+						   print 'No "Pilot MCQs" items found to generate paper.';
+					  }?>  
+				  </td>	
+				  <td>
+					<?php 
+					if($row['CRQ_Items'] != 0){
+					if(in_array($row['item_subject_id'], $crqpapersubjectids)){?>
+					  <span style="color:#17a2b8;">Generated</span>&nbsp; <a title="Delete" class="delete btn btn-sm btn-danger" href="<?php print base_url('admin/pilotpaper/deletepapercrq/'.$row['item_subject_id']);?>" onclick="return confirm('Do you want to delete ?')"> <i class="fa fa-trash-o"></i></a>
+					<?php  
+					}
+					else
+					{ ?>
+						<?php echo form_open(base_url('admin/pilotpaper/generatecrqs'), 'class="form-horizontal" name="frm_crqs"');  ?>
+							<div class="form-group">
+								<div class="col-md-12">
+									<input type="hidden" name="gradeid" value="<?php print $row['Grade']+2; ?>" >
+									<input type="hidden" name="subjectid" value="<?php print $row['item_subject_id']; ?>">
+									<input type="hidden" name="c_para_count" value="<?php print $row['Pilot_Paragraphs']; ?>">
+									<input type="hidden" name="c_group_count" value="<?php print $row['Pilot_Groups']; ?>">								
+									<input type="hidden" name="c_m_total_erq" value="<?php print $row['CRQ_Items']; ?>">
+									<input type="submit" name="submit" value="Generate" class="btn btn-info pull-right">
+								</div>
+							</div>
+						<?php echo form_close( ); ?> 
+					<?php } 
+					}
+					  else
+					  {
+						  print 'No "Pilot CRQs" items found to generate paper.';
+					  }?>
+				  </td>
+                  <?php /*?><td><a href='<?= base_url('admin/pilotpaper/pilot_ver_view/'.$row['item_subject_id']);?>'>V-1</a></td>              
+                  <td><a title="View" class="view btn btn-sm btn-info" href='<?= base_url('admin/pilotpaper/generate_paper/'.$row['item_subject_id']);?>'>Objecttive</a><a title="View" class="view btn btn-sm btn-info" style="margin-left:03px" href='<?= base_url('admin/pilotpaper/generate_paper_subjective/'.$row['item_subject_id']);?>'>Subjective</a></td><?php */?>
+                </tr>
+            <?php }?>
+            	<tr style="font-weight:bold;">
+                  <td colspan="2" align="right">Total</td>
+                  <td><?php echo $Pilot_Items;?></td>
+                  <td><?php echo $MCQ_Items;?></td>
+                  <td><?php echo $CRQ_Items;?></td>
+                  <td><?php echo $Pilot_Paragraphs;?></td>
+                  <td><?php echo $Pilot_Groups;?></td>
+                  <td colspan="2"></td>
+                </tr>
+            </tbody>
+        </table>
+      </div>
+    </div>
+	  
+	  <?php /*?><div class="card">
+		<div class="d-inline-block row" >
+          <h3 class="card-title">&nbsp;&nbsp;&nbsp;&nbsp;	<strong>Pilot Paper MCQs Paper (Objective)</strong></h3>
+        </div>
+      <div class="card-body">
+		<table id="na_datatable" class="table table-bordered table-striped" width="100%" style="border:double; color:#000">
+          <thead>
+            <tr>
+              <th>Grade</th>
+              <th>Subjects</th>
+              <th>Indivisual MCQs</th>
+              <th>MCQs Paras</th>
+              <!--<th>Ph-1 MCQs Para Ids</th> -->             
+              <th>MCQs in Paras</th>  
+			  <th>Versions</th>
+              <th>MCQs Papers in Each Versions</th>             
+              <th>Total MCQs </th>
+            
+            </tr>
+          </thead>
+            <tbody>
+            <?php			
+			foreach ($paper1 as $row){
+                ?>
+                <tr>
+                  <td><?php echo ($row['p_grade_id']-2);?></td>
+                  <td><?php echo $row['subject_name_en'];?></td>
+                  <td><?php echo $row['p_m_ind_num_mcqs'];?></td>
+                  <td><?php echo $row['p_m_num_paragraphs']; ?></td>                  
+                  <td><?php echo $row['p_m_num_mcqs_para']; ?></td>
+                  <td><?php echo $row['p_m_versions'];?></td>
+					
+                <td>
+</div>
+					<?php  $ver = explode(",",$row['p_m_versions_distr']);
+				if(isset($ver[0])) { echo '<div class="dropdown"><button class="dropbtn">I('.(substr_count($row['p_m_v1_mcq_ids'],',')+1+$row['p_m_v1_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper/'.$row['subject_id'].'_1').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key/'.$row['subject_id'].'_1').'" target="_blank">Answer Key</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary/'.$row['subject_id'].'_1').'" target="_blank">View Items Summary</a></div></div>'; }
+				
+				if(isset($ver[1])) { echo ',<div class="dropdown"><button class="dropbtn">II('.(substr_count($row['p_m_v2_mcq_ids'],',')+1+$row['p_m_v2_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper/'.$row['subject_id'].'_2').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key/'.$row['subject_id'].'_2').'" target="_blank">Answer Key</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary/'.$row['subject_id'].'_2').'" target="_blank">View Items Summary</a></div></div>'; }
+				if(isset($ver[2])) { echo ',<div class="dropdown"><button class="dropbtn">III('.(substr_count($row['p_m_v3_mcq_ids'],',')+1+$row['p_m_v3_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper/'.$row['subject_id'].'_3').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key/'.$row['subject_id'].'_3').'" target="_blank">Answer Key</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary/'.$row['subject_id'].'_3').'" target="_blank">View Items Summary</a></div></div>'; }
+				if(isset($ver[3])) { echo ',<div class="dropdown"><button class="dropbtn">IV('.(substr_count($row['p_m_v4_mcq_ids'],',')+1+$row['p_m_v4_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper/'.$row['subject_id'].'_4').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key/'.$row['subject_id'].'_4').'" target="_blank">Answer Key</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary/'.$row['subject_id'].'_4').'" target="_blank">View Items Summary</a></div></div>'; }
+				if(isset($ver[4])) { echo ',<div class="dropdown"><button class="dropbtn">V('.(substr_count($row['p_m_v5_mcq_ids'],',')+1+$row['p_m_v5_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper/'.$row['subject_id'].'_5').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key/'.$row['subject_id'].'_5').'" target="_blank">Answer Keys</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary/'.$row['subject_id'].'_5').'" target="_blank">View Items Summary</a></div></div>'; }
+				if(isset($ver[5])) { echo ',<div class="dropdown"><button class="dropbtn">VI('.(substr_count($row['p_m_v6_mcq_ids'],',')+1+$row['p_m_v6_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper/'.$row['subject_id'].'_6').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key/'.$row['subject_id'].'_6').'" target="_blank">Answer Keys</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary/'.$row['subject_id'].'_6').'" target="_blank">View Items Summary</a></div></div>'; }
+				if(isset($ver[6])) { echo ',<div class="dropdown"><button class="dropbtn">VII('.(substr_count($row['p_m_v7_mcq_ids'],',')+1+$row['p_m_v7_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper/'.$row['subject_id'].'_7').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key/'.$row['subject_id'].'_7').'" target="_blank">Answer Keys</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary/'.$row['subject_id'].'_7').'" target="_blank">View Items Summary</a></div></div>'; }
+				if(isset($ver[7])) { echo ',<div class="dropdown"><button class="dropbtn">VIII('.(substr_count($row['p_m_v8_mcq_ids'],',')+1+$row['p_m_v8_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper/'.$row['subject_id'].'_8').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key/'.$row['subject_id'].'_8').'" target="_blank">Answer Keys</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary/'.$row['subject_id'].'_8').'" target="_blank">View Items Summary</a></div></div>'; }
+				
+				if(isset($ver[8])) { echo ',<div class="dropdown"><button class="dropbtn">IX('.(substr_count($row['p_m_v9_mcq_ids'],',')+1+$row['p_m_v9_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper/'.$row['subject_id'].'_9').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key/'.$row['subject_id'].'_9').'" target="_blank">Answer Keys</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary/'.$row['subject_id'].'_9').'" target="_blank">View Items Summary</a></div></div>'; }
+				
+				if(isset($ver[9])) { echo ',<div class="dropdown"><button class="dropbtn">X('.(substr_count($row['p_m_v10_mcq_ids'],',')+1+$row['p_m_v10_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper/'.$row['subject_id'].'_10').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key/'.$row['subject_id'].'_10').'" target="_blank">Answer Keys</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary/'.$row['subject_id'].'_10').'" target="_blank">View Items Summary</a></div></div>'; }
+					
+						?></td>
+					<td><?php echo $row['p_m_total_mcqs'];?></td>
+                </tr>
+            <?php }?>            	
+            </tbody>
+        </table>
+      </div><?php */?>
+    
+	  <?php /*?><div class="card" >
+		<div class="d-inline-block row" >
+          <h3 class="card-title">&nbsp;&nbsp;&nbsp;&nbsp;	<strong>Pilot Paper CRQs Paper (Subjective)</strong></h3>
+        </div>
+      <div class="card-body">
+		<table id="na_datatable" class="table table-bordered table-striped" width="100%" style="border:double; color:#000">
+          <thead>
+            <tr>
+              <th>Grade</th>
+              <th>Subjects</th>
+              <th>Indivisual CRQs</th>
+              <th>Groups </th>
+              <th>Paragraphs</th>              
+              <th>Total CRQs</th>  
+			  <th>ERQs Papers </th>
+            </tr>
+          </thead>
+            <tbody>
+            <?php			
+				$para_subjects = [4,8,12,18,25,31,39,47,5,9,13,19,26,32,40,48];
+				foreach ($paper1erq as $row){
+
+					?>
+					<tr>
+					  <td><?php echo ($row['c_grade_id']-2);?></td>
+					  <td><?php echo $row['subject_name_en'];?></td>
+					  <td><?php echo $row['c_ind_crq_count'];?></td>
+					  <td><?php echo $row['c_group_count']; ?></td>
+					  <td><?php echo $row['c_para_count']; ?></td>                  
+					  <td><?php echo $row['c_m_total_erq']; ?></td>
+					  <td><?php  
+							if(in_array($row['c_subject_id'],$para_subjects)){
+							if($row['c_para_count']>0) {	echo '<a href="'.base_url('admin/pilotpaper/para_erqs_view/'.$row['subject_id']).'">CRQ Paragraphs('.$row['c_para_count'].')</a>'; }
+							} 
+							else
+							{
+								if($row['c_group_count']>0) 
+								{ 
+
+								 echo '<div class="dropdown"><button class="dropbtn">CRQs/ERQs Groups ('.$row['c_group_count'].') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/group_erqs_view/'.$row['subject_id']).'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/group_erqs_view_key/'.$row['subject_id']).'" target="_blank">Answers / Rubrics</a></div></div>';							
+
+								}					
+							}
+							if($row['c_ind_crq_count']>0) 
+							{ 
+
+							   echo '<div class="dropdown"><button class="dropbtn">ERQs Paper('.$row['c_ind_crq_count'].') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/indiv_erqs_view/'.$row['subject_id']).'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/indiv_erqs_view_key/'.$row['subject_id']).'" target="_blank">Answers / Rubrics</a></div></div>';
+
+							}					  
+					  ?>
+                  </td>
+                </tr>
+            <?php }?>            	
+            </tbody>
+        </table>
+      </div>
+    </div><?php */?>
+  </section>  
+</div>
+<!-- DataTables -->
+<script src="<?= base_url() ?>assets/plugins/datatables/jquery.dataTables.js"></script>
+<script src="<?= base_url() ?>assets/plugins/datatables/dataTables.bootstrap4.js"></script>
+<script src="<?= base_url() ?>/assets/notify.js"></script>

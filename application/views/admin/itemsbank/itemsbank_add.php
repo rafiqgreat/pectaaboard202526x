@@ -1,0 +1,343 @@
+  <!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+	<!-- Main content -->
+	<section class="content">
+		<div class="card card-default color-palette-bo">
+			<div class="card-header">
+				<div class="d-inline-block">
+					<h3 class="card-title"> <i class="fa fa-plus"></i> Generate MCQs Itembank </h3>
+				</div>
+				<div class="d-inline-block float-right">
+					<a href="<?= base_url('admin/itemsbank'); ?>" class="btn btn-success"><i class="fa fa-list"></i>  MCQs Itembanks List</a>
+				</div>
+			</div>
+			<div class="card-body">
+				<!-- For Messages -->
+				<?php $this->load->view('admin/includes/_messages.php') ?>
+				<?php echo form_open(base_url('admin/itemsbank/add'), 'name="frm_itembank_add" id="frm_itembank_add" class="form-horizontal"');  ?>
+				<div class="row">
+					<div class="col-lg-4 col-sm-12">
+						<label for="ibm_grade_id" class="control-label">Grade *</label>
+						<select name="ibm_grade_id" class="form-control form-group" id="ibm_grade_id" required>
+							<option value="">--Select Grades--</option>
+							<?php
+							foreach ( $grades as $grade ) {
+								echo '<option value="' . $grade[ 'grade_id' ] . '">' . $grade[ 'grade_name_en' ] . '</option>';
+							}
+							?>
+						</select>
+					</div>
+					<script language="javascript" type="text/javascript">
+						var addedsubjects = [];
+						<?php
+					if(isset($added_subjects[0]))  {
+						$i=0;
+						foreach($added_subjects as $valsub)
+						{
+							echo " addedsubjects[".$i++."] = '".$valsub['ibm_subject_id']."'; ";
+						}
+					}  ?>
+					</script>
+					<div class="col-lg-4 col-sm-12">
+						<label for="ibm_subject_id" class="control-label">Subject *</label>
+						<select name="ibm_subject_id" class="form-control form-group" id="ibm_subject_id" required>
+							<option value="">--Select Subjects--</option>
+						</select>
+					</div>
+					<div class="col-lg-4 col-sm-12">
+						<label for="ibm_created" class="col-sm-12 control-label">Date *</label>
+						<input type="date" name="ibm_created" class="form-control" id="ibm_created" placeholder="" required="required" value="<?php echo date(" d/m/Y "); ?>" readonly>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-12 col-sm-12">
+						<hr/>
+					</div>
+				</div>
+				<script>
+				</script>
+				<div id="wizard">
+				</div>
+				<!--<div class="form-group">
+					<div class="col-md-12">
+						<input type="submit" name="submit" value="Save" class="btn btn-info pull-right">
+					</div>
+				</div>-->
+				<?php echo form_close( ); ?>
+				<!-- /.box-body -->
+			</div>
+		</div>
+	</section>
+</div>
+<script type="text/javascript" src="<?php echo base_url(); ?>/assets/notify.js">
+</script>
+<script type="text/javascript">
+	var numberOfBlocks = '';
+	var numberOfQuestions = '';
+	$( '#ibm_grade_id' ).on( 'change', function () {
+		$( '#wizard' ).empty();
+		$.post( '<?=base_url("admin/itemsbank/subjects_by_grade")?>', {
+				'<?php echo $this->security->get_csrf_token_name(); ?>': '<?php echo $this->security->get_csrf_hash(); ?>',
+				grade_id: this.value
+			},
+			function ( data ) {
+				arr = $.parseJSON( data );
+				console.log( arr );
+				$( '#ibm_subject_id option:not(:first)' ).remove();
+				$.each( arr, function ( key, value ) {
+					$( '#ibm_subject_id' )
+						.append( $( "<option></option>" )
+							.attr( "value", value.subject_id )
+							.text( value.subject_name_en )
+						);
+				} );
+			} );
+
+	} );
+
+	$( '#ibm_subject_id' ).on( 'change', function () {
+		var subjecid = this.value;
+		//console.log( addedsubjects );
+		if ( jQuery.inArray( this.value, addedsubjects ) !== -1 ) {
+			alert( 'This Subject (ID: ' + this.value + ') ItemBank already Generated! First Delete and then Add this! or Try other subject!' );
+			$( '#ibm_subject_id' ).val( "" );
+			return false;
+		}
+		$.post( '<?=base_url("admin/itemsbank/all_blocks_by_subject")?>', {
+				'<?php echo $this->security->get_csrf_token_name(); ?>': '<?php echo $this->security->get_csrf_hash(); ?>',
+				subject_id: this.value
+			},
+			function ( data ) {
+				arr = $.parseJSON( data );
+				//console.log( arr );
+				$( '#wizard' ).empty();
+				
+					
+				$.each( arr, function ( key, value ) {
+					numberOfBlocks = value.ibs_mcq_blocks - value.ibs_para_question;
+					numberOfQuestions = value.ibs_mcq_bquestions;
+
+					for ( let i = 1; i <= value.ibs_mcq_blocks - value.ibs_para_question; i++ ) {
+						//var questionhtml = '<div class="row">';
+						var questionhtml = '';
+
+						for ( let j = 1; j <= value.ibs_mcq_bquestions; j++ ) {
+							questionhtml +=
+								'<div class="row">'+
+									'<div class="col-lg-12 col-sm-12">' +
+										'<h3><strong>Question #' + i + '.' + j + ' </strong>&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight: normal;font-size: 0.8em;">[Item ID - SLO - Item Code - (Difficulty) - (Cognitive Level) - Item Stem]</span></h3>' +
+										'<select name="ibm_b' + i + '_item' + j + '" class="form-control form-group populatequestion" id="ibm_b' + i + '_item' + j + '" onChange="getCurrentValue(this.id, this.value, numberOfBlocks, '+numberOfQuestions+')">' +
+											'<option value="">--Select Item/Question--</option>' +
+										'</select>' +
+									'</div>'+
+								'</div>';
+						}
+						//questionhtml += '</div>';
+
+						var blockhtml = '<h2>Q</h2><section><h3><strong>Select Block-' + i + '/Question-' + i + ' Items</strong></h3>' + questionhtml + '</section>';
+
+						$( '#wizard' ).append( blockhtml );
+					}
+					
+					if(value.ibs_para_question > 0){
+						var  parahtml = '';
+						var numberOfParagraph = parseInt(value.ibs_para_question);
+						for ( let j = 1; j <= value.ibs_para_question; j++ ) {
+						parahtml += 
+								'<div class="row">'+
+									'<div class="col-lg-12 col-sm-12">' +
+										'<h3><strong>Paragraph # '+j+'</h3>' +
+										'<select name="ibm_p' + j + '_para" class="form-control form-group" id="ibm_p' + j + '_para" onChange="getCurrentValuePara(this.id, this.value,'+numberOfParagraph+')">' +
+											'<option value="">--Select Paragraph--</option>' +
+										'</select>' +
+									'</div>'+
+								'</div>';
+						}
+						var parablockhtml = '<h2>Paragraph</h2><section><h3><strong>Select Paragraph</strong></h3>' + parahtml + '</section>';
+						$( '#wizard' ).append( parablockhtml );
+						for ( let i = 1; i <= value.ibs_para_question; i++ ) {
+							populateParaDropdow(i,subjecid);
+						}
+					}
+					
+				});
+
+				$( function () {
+					$( "#wizard" ).steps( {
+						headerTag: "h2",
+						bodyTag: "section",
+						transitionEffect: "slideLeft",
+						onFinished: function ( event, currentIndex ) {
+							$("#frm_itembank_add").submit();
+							//$(document).on('submit','#tbl_tmpfrm',function(){})
+							//alert('submitted');
+						}
+					} );
+				});
+				
+				/*$.each( arr, function ( key, value ) {
+
+					for ( let ii = 1; ii <= value.ibs_mcq_blocks; ii++ ) {
+						for ( let jj = 1; jj <= value.ibs_mcq_bquestions; jj++ ) {
+							populatedropdow(ii,jj,subjecid);
+						}
+					}
+				});*/
+				populatedropdowall(subjecid);
+			//alert(numberOfBlocks+' - '+ numberOfQuestions);
+			
+			});
+
+	});//subject change
+	
+	function populatedropdowall(subjectid){
+		
+		$.post( '<?=base_url("admin/itemsbank/all_items_by_subject")?>', {
+			'<?php echo $this->security->get_csrf_token_name(); ?>': '<?php echo $this->security->get_csrf_hash(); ?>',
+			subject_id: subjectid
+		},
+		function ( data ) {
+			arr = $.parseJSON( data );
+			//console.log( arr );
+			//<!-----------------------------------Start Blocks b1-------------------------------------------------------->
+			//$( '.populatequestion option:not(:first)' ).remove();
+			$('.populatequestion').each(function(index) {
+				// Remove all options except the first option
+				$(this).find('option:not(:first)').remove();
+			});
+			  
+			$.each( arr, function ( key, value ) {
+				var clean_en_string = value.item_stem_en.replace( /(<([^>]+)>)/ig, '');
+				clean_en_string = clean_en_string.replace(/\s+/g, ' ').trim();
+				clean_en_string = clean_en_string.replace('&nbsp;', ' ').trim();
+				clean_en_string = clean_en_string.substring(0, 50);
+				
+				var clean_ur_string = value.item_stem_ur.replace( /(<([^>]+)>)/ig, '');
+				clean_ur_string = clean_ur_string.replace(/\s+/g, ' ').trim();
+				clean_ur_string = clean_ur_string.replace('&nbsp;', ' ').trim();
+				clean_ur_string = clean_ur_string.substring(0, 50);
+				
+				$( '.populatequestion' )
+					.append( $( "<option></option>" )
+						.attr( "value", value.item_id )
+						.text( value.item_id +' - SLO('+value.slo_number+') - '+value.item_code + ' (Difficulty: '+value.item_difficulty+' ) - (Cognitive Level: '+value.item_cognitive_bloom+' - '+clean_en_string+' - '+clean_ur_string+')' )
+					);
+			});
+		});//end dropdwnpopution
+	}
+	
+	function populatedropdow(i,j,subjectid){
+		
+		$.post( '<?=base_url("admin/itemsbank/all_items_by_subject")?>', {
+			'<?php echo $this->security->get_csrf_token_name(); ?>': '<?php echo $this->security->get_csrf_hash(); ?>',
+			subject_id: subjectid
+		},
+		function ( data ) {
+			arr = $.parseJSON( data );
+			//console.log( arr );
+			//<!-----------------------------------Start Blocks b1-------------------------------------------------------->
+			$( '#ibm_b' + i + '_item' + j + ' option:not(:first)' ).remove();
+			$.each( arr, function ( key, value ) {
+				var clean_en_string = value.item_stem_en.replace( /(<([^>]+)>)/ig, '');
+				clean_en_string = clean_en_string.replace(/\s+/g, ' ').trim();
+				clean_en_string = clean_en_string.replace('&nbsp;', ' ').trim();
+				clean_en_string = clean_en_string.substring(0, 50);
+				
+				var clean_ur_string = value.item_stem_ur.replace( /(<([^>]+)>)/ig, '');
+				clean_ur_string = clean_ur_string.replace(/\s+/g, ' ').trim();
+				clean_ur_string = clean_ur_string.replace('&nbsp;', ' ').trim();
+				clean_ur_string = clean_ur_string.substring(0, 50);
+				
+				$( '#ibm_b' + i + '_item' + j )
+					.append( $( "<option></option>" )
+						.attr( "value", value.item_id )
+						.text( value.item_id +' - SLO('+value.slo_number+') - '+value.item_code + ' (Difficulty: '+value.item_difficulty+' ) - (Cognitive Level: '+value.item_cognitive_bloom+' - '+clean_en_string+' - '+clean_ur_string+')' )
+					);
+			});
+		});//end dropdwnpopution
+	}
+	
+	function populateParaDropdow(i,subjectid){
+		
+		$.post( '<?=base_url("admin/itemsbank/all_paras_by_subject")?>', {
+			'<?php echo $this->security->get_csrf_token_name(); ?>': '<?php echo $this->security->get_csrf_hash(); ?>',
+			subject_id: subjectid
+		},
+		function ( data ) {
+			arr = $.parseJSON( data );
+			//console.log( arr );
+			//<!-----------------------------------Start Blocks b1-------------------------------------------------------->
+			$( '#ibm_p' + i + '_para option:not(:first)' ).remove();
+			$.each( arr, function ( key, value ) {
+				var clean_en_string = value.para_text_en.replace( /(<([^>]+)>)/ig, '');
+				clean_en_string = clean_en_string.replace(/\s+/g, ' ').trim();
+				clean_en_string = clean_en_string.replace('&nbsp;', ' ').trim();
+				clean_en_string = clean_en_string.substring(0, 100);
+				
+				var clean_ur_string = value.para_text_ur.replace( /(<([^>]+)>)/ig, '');
+				clean_ur_string = clean_ur_string.replace(/\s+/g, ' ').trim();
+				clean_ur_string = clean_ur_string.replace('&nbsp;', ' ').trim();
+				clean_ur_string = clean_ur_string.substring(0, 100);
+				
+				$( '#ibm_p' + i + '_para' )
+					.append( $( "<option></option>" )
+						.attr( "value", value.para_id )
+						.text( clean_en_string+' - '+clean_ur_string )
+					);
+			});
+		});//end dropdwnpopution
+	}
+	
+	function getCurrentValuePara(currentSelectbox, selctedvalue, numberOfPara){
+		/*alert(selctedvalue);
+		alert(numberOfBlocks);
+		alert(numberOfQuestions);
+		alert(currentSelectbox);*/
+
+		for ( let jj = 1; jj <= numberOfPara; jj++ ) {
+			if(selctedvalue != ''){
+				/*if(currentSelectbox !== "ibm_b"+ii+"_item"+jj){
+					$("#ibm_b"+ii+"_item"+jj+" option[value='"+selctedvalue+"']").remove();
+				}*/
+				if(currentSelectbox !== "ibm_p"+jj+"_para"){
+					if(selctedvalue == $("#ibm_p"+jj+"_para").val() ){
+						//alert($("#ibm_b"+ii+"_item"+jj).val());
+						alert('Paragraph already selected in Paragraph # ' + jj);
+						$("#"+currentSelectbox).val('');
+					}
+				}
+			}
+		}
+		
+	}
+	function getCurrentValue(currentSelectbox, selctedvalue, numberOfBlocks, numberOfQuestions){
+		/*alert(selctedvalue);
+		alert(numberOfBlocks);
+		alert(numberOfQuestions);
+		alert(currentSelectbox);*/
+		for ( let ii = 1; ii <= numberOfBlocks; ii++ ) {
+			for ( let jj = 1; jj <= numberOfQuestions; jj++ ) {
+				if(selctedvalue != ''){
+					/*if(currentSelectbox !== "ibm_b"+ii+"_item"+jj){
+						$("#ibm_b"+ii+"_item"+jj+" option[value='"+selctedvalue+"']").remove();
+					}*/
+					if(currentSelectbox !== "ibm_b"+ii+"_item"+jj){
+						if(selctedvalue == $("#ibm_b"+ii+"_item"+jj).val() ){
+							//alert($("#ibm_b"+ii+"_item"+jj).val());
+							alert('Item already selected in Block-' + ii + '/Question-' + ii + ' and Question #' + ii + '.' + jj);
+							$("#"+currentSelectbox).val('');
+						}
+					}
+				}
+			}
+		}
+	}
+</script>
+<script language="javascript" type="text/javascript">
+	document.getElementById( 'ibm_created' ).valueAsDate = new Date();
+	function funSubmitPaper(){
+		//$( "#frm_itembank_add" ).submit();
+		//alert('infunction');
+	}
+</script>

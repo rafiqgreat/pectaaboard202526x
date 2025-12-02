@@ -1,0 +1,474 @@
+<!-- DataTables -->
+<link rel="stylesheet" href="<?= base_url() ?>assets/plugins/datatables/dataTables.bootstrap4.css"> 
+<style>
+.dropbtn {
+  background-color: #04AA6D;
+  color: white;
+  padding: 5px 8px;
+  font-size: 14px;
+  border: none;
+  margin: 3px;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 6px 10px;
+  text-decoration: none;
+  display: block;
+  font-size: 14px;
+}
+
+.dropdown-content a:hover {background-color: #ddd;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropbtn {background-color: #3e8e41;}
+</style>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <section class="content">
+    <!-- For Messages -->
+    <?php $this->load->view('admin/includes/_messages.php') ?>
+    <div class="card">
+      <div class="card-header">
+        <div class="d-inline-block">
+          <h3 class="card-title"><i class="fa fa-list"></i>&nbsp; Pilot Paper 2 Dashboard</h3>
+        </div>        
+      </div>
+    </div>
+	  
+    <div class="card">
+		<div class="d-inline-block row" >
+          <h3 class="card-title">&nbsp;&nbsp;&nbsp;&nbsp;	<strong>Paper Statistics for Both Phases (I&II)</strong></h3>
+        </div>
+      <div class="card-body">
+		<table id="na_datatable" class="table table-bordered table-striped" width="100%" style="border:double; color:#000">
+          <thead>
+            <tr>
+              <th>Grade</th>
+              <th>Subjects</th>
+              <th>Pilot Items</th>
+              <th>Pilot MCQs</th>
+			  <th>Ph-1 MCQs</th>
+			  <th>Ph-2 MCQs</th>
+              <th>Pilot CRQs</th>
+			  <th>Ph-1 CRQs</th>
+			  <th>Ph-2 CRQs</th>
+              <th>Paras</th>  
+			  <th>Ph-1 Paras</th>  
+			  <th>Ph-2 Paras</th>  			  
+			  <th>Groups</th>
+			  <th>Ph-1 Groups</th>
+			  <th>Ph-2 Groups</th>            
+            </tr>
+          </thead>
+            <tbody>
+            <?php 
+			$group_item = 0;
+			$Pilot_Items=$MCQ_Items=$MCQ1_Items=$MCQ2_Items=$CRQ_Items=$CRQ1_Items=$CRQ2_Items=$Groups=$Groups1=$Groups2=$Paras=$Paras1=$Paras2=0;
+			foreach ($records as $row){
+                ?>
+                <tr>
+                  <td><?php echo $row['Grade'];?></td>
+                  <td><?php echo $row['subject_name_en'];?></td>
+                  <td><?php echo $row['Pilot_Items']; $Pilot_Items+=$row['Pilot_Items'];?></td>
+                  <td><?php echo $row['MCQ_Items']; $MCQ_Items+=$row['MCQ_Items'];?></td>
+					<td><?php echo $row['MCQ1_Items']; $MCQ1_Items+=$row['MCQ1_Items'];?></td>
+					<td><?php echo $row['MCQ2_Items']; $MCQ2_Items+=$row['MCQ2_Items'];?></td>
+                  <td><?php echo $row['CRQ_Items']; $CRQ_Items+=$row['CRQ_Items'];?></td>
+					<td><?php echo $row['CRQ1_Items']; $CRQ1_Items+=$row['CRQ1_Items'];?></td>
+					<td><?php echo $row['CRQ2_Items']; $CRQ2_Items+=$row['CRQ2_Items'];?></td>
+                  <td><?php echo $row['Paras']; $Paras+=$row['Paras'];?></td>
+					<td><?php echo $row['Paras1']; $Paras1+=$row['Paras1'];?></td>
+					<td><?php echo $row['Paras2']; $Paras2+=$row['Paras2'];?></td>
+                  <td><?php echo $row['Groups']; $Groups+=$row['Groups'];?></td>
+					<td><?php echo $row['Groups1']; $Groups1+=$row['Groups1'];?></td>
+					<td><?php echo $row['Groups2']; $Groups2+=$row['Groups2'];?></td>
+                </tr>
+            <?php }?>
+            	<tr style="font-weight:bold;">
+                  <td colspan="2" align="right">Total</td>
+                  <td><?php echo $Pilot_Items;?></td>
+                  <td><?php echo $MCQ_Items;?></td>
+					<td><?php echo $MCQ1_Items;?></td>
+					<td><?php echo $MCQ2_Items;?></td>
+                  <td><?php echo $CRQ_Items;?></td>
+					<td><?php echo $CRQ1_Items;?></td>
+					<td><?php echo $CRQ2_Items;?></td>
+                  <td><?php echo $Paras;?></td>
+					<td><?php echo $Paras1;?></td>
+					<td><?php echo $Paras2;?></td>
+                  <td><?php echo $Groups;?></td>
+					<td><?php echo $Groups1;?></td>
+					<td><?php echo $Groups2;?></td>
+                </tr>
+            </tbody>
+        </table>
+      </div>
+    </div>
+	  
+	  <div class="card">
+		<div class="d-inline-block row" >
+          <h3 class="card-title">&nbsp;&nbsp;&nbsp;&nbsp;	<strong>Pilot MCQs Paper Phase - 2 Statistics </strong></h3>
+        </div>
+      <div class="card-body">
+		<table id="na_datatable" class="table table-bordered table-striped" width="100%" style="border:double; color:#000">
+          <thead>
+            <tr>
+              <th>Grade</th>
+              <th>Subjects</th>
+			  <th>Ph-2 MCQs</th>
+			  <th>Default Per Version</th>
+			  <th>Total Versions</th>
+			  <th>Items in Each Versions + Extra</th>
+			  <th>Distributions in versions</th>
+			
+            </tr>
+          </thead>
+            <tbody>
+            <?php 
+			$group_item = 0;
+			$Pilot_Items=$MCQ_Items=$MCQ1_Items=$MCQ2_Items=$CRQ_Items=$CRQ1_Items=$CRQ2_Items=$Groups=$Groups1=$Groups2=$Paras=$Paras1=$Paras2=0;
+              //print '<pre>';  print_r($records);die('234');
+			foreach ($records as $row){
+				$p2_mcq_items = $row['MCQ2_Items'];
+				$p2_per_version = ($row['Grade']>4?50:40);
+				$p2_mcq_versions = round(($row['MCQ2_Items']/($row['Grade']>4?50:40)));
+				$p2_mcq_items = $row['MCQ2_Items'];
+                if($p2_mcq_versions != 0)
+				    $p2_per_version_actaul = floor($p2_mcq_items / $p2_mcq_versions);
+                else
+                    $p2_per_version_actaul = 0;
+                if($p2_mcq_versions != 0)
+				    $p2_per_version_actaul_remaining = $p2_mcq_items % $p2_mcq_versions;
+                else
+                    $p2_per_version_actaul_remaining = 0;
+				$p2_version_distributions = 0;
+				
+				
+                ?>
+                <tr>
+                  <td><?php echo $row['Grade'];?></td>
+                  <td><?php echo $row['subject_name_en'];?></td>
+					<td><?php echo $p2_mcq_items; $MCQ2_Items+=$p2_mcq_items;?></td>
+					<td><?php echo $p2_per_version;?></td>
+					<td><?php echo $p2_mcq_versions;?></td>
+					<td><?php echo $p2_per_version_actaul . '+' . $p2_per_version_actaul_remaining;?></td>
+					<td><?php 
+						$extra = $p2_per_version_actaul_remaining;
+						$version_distributions = "";
+						for($x=0;$x<$p2_mcq_versions;$x++)
+						{
+							$extraadd = 0;
+							if($extra>0) {
+								$extraadd = 1;
+								$extra--;
+							}							
+							$version_distributions .=  ($p2_per_version_actaul + $extraadd ) . (($x==($p2_mcq_versions-1))?'':',');							
+							
+						}
+						echo $version_distributions;
+						?>
+					<br />
+						<?php
+				/*
+				/***********************************************/
+				/***********************************************/
+				/********* STEP - 1 - DONT DELETE***************/
+				/***********BEFORE THIS ALERADY ALL SUBJECTS MUST BE ADDED IN MCQS PILOT TABLES***/
+				/************HERE UPDATING VERSIONS AND DISTRUCTIONS WITH TOTAL MCQS IN THIS QUERIS*******/
+				/***********************************************/
+				//// update query to set mcq pilot versions and distructions with total mcqs
+				
+				$sql = "UPDATE ci_pilot_papers_mcqs SET p_m_versions = ".$p2_mcq_versions.", p_m_versions_distr = '".$version_distributions."', p_m_total_mcqs = ".$p2_mcq_items.", p_m_ind_num_mcqs = ".$p2_mcq_items." WHERE p_subject_id = ".$row['item_subject_id']." AND p_phase = 2";
+				//echo $sql;
+				//$this->Pilotpaper_model->run_update_query_custom($sql);
+				
+				
+				/***********************************************/
+				/******************* STEP 2 - GET AND UPDATE PILOT PHASE 2 MCQS QUESTIONS AND **************/
+				/*********************UPDATE IT TO MCQS TALBE WITHOUT ENGLISH AND URDU SUBJECT ****************/
+				/***********************************************/								
+				//$this->Pilotpaper_model->getVersions_msqs_ids_noparas($row['item_subject_id'], 2);
+				/***********************************************/
+				/***********************************************/
+				/***********************************************/
+				?>
+					</td>
+                </tr>				
+				
+            <?php }?>
+            	<?php /*?><tr style="font-weight:bold;">
+                  <td colspan="2" align="right">Total</td>
+					<td><?php echo $MCQ2_Items;?></td>
+					<td><?php echo $MCQ2_Items;?></td>
+					<td><?php echo $MCQ2_Items;?></td>
+                </tr><?php */?>
+            </tbody>
+        </table>
+      </div>
+    </div>
+	  
+	  
+	  <div class="card">
+		<div class="d-inline-block row" >
+          <h3 class="card-title">&nbsp;&nbsp;&nbsp;&nbsp;	<strong>Pilot CRQs Paper Phase - 2 Statistics </strong></h3>
+        </div>
+      <div class="card-body">
+		<table id="na_datatable" class="table table-bordered table-striped" width="100%" style="border:double; color:#000">
+          <thead>
+            <tr>
+              <th>Grade</th>
+              <th>Subjects</th>
+			  <th>Ph-2 CRQs</th>
+			  <th>Ph-2 Paras</th>  			  
+			  <th>Ph-2 Groups</th>            
+            </tr>
+          </thead>
+            <tbody>
+            <?php 
+			$group_item = 0;
+			$Pilot_Items=$MCQ_Items=$MCQ1_Items=$MCQ2_Items=$CRQ_Items=$CRQ1_Items=$CRQ2_Items=$Groups=$Groups1=$Groups2=$Paras=$Paras1=$Paras2=0;
+			$arr_eng_urdu = [5,9,13,19,26,32,40,48,4,8,12,18,25,31,39,47];			
+			foreach ($records as $row){
+				$subject_id = $row['item_subject_id'];
+				
+				/************************************************************************************************/
+				/*$p1_groups_result = $this->Pilotpaper_model->getPilotCRQItems($subject_id,1);// phase 1 ids
+				$p1_groups_ids = $p1_groups_result[0]->c_group_ids;
+				$p2_groups_ids = 0;
+				$p2_groups_count = $row['Groups2'];*/
+				/******************************************************************************/
+				/******************************************************************************/
+				/******************************************************************************/
+				/*************** get all crq of pilot 2 and update to crq pilot 2 table script ******/		
+			/*	if(!in_array($subject_id,$arr_eng_urdu))
+				{
+				$p2_groups_result = $this->Pilotpaper_model->getPilotCRQItemsRemaining($subject_id,$p1_groups_ids);// phase 2 ids
+				$p2_groups_ids = $p2_groups_result[0]->pilot_groups;
+				
+				$sql = "UPDATE ci_pilot_papers_crqs SET c_group_count = ".$p2_groups_count.", c_group_ids = '".$p2_groups_ids."', c_m_total_erq = ".$p2_groups_count." WHERE c_subject_id = ".$subject_id." AND c_phase = 2";
+				echo $sql;
+				$this->Pilotpaper_model->run_update_query_custom($sql);		
+				
+				}*/
+				
+				/****************************************************************************/
+				/****************************************************************************/
+				/****************************************************************************/
+                ?>
+                <tr>
+                  <td><?php echo $row['Grade'];?></td>
+                  <td><?php echo $row['subject_name_en'];?></td>
+					<td><?php echo $row['CRQ2_Items']; $CRQ2_Items+=$row['CRQ2_Items'];?></td>
+					<td><?php echo $row['Paras2']; $Paras2+=$row['Paras2'];?></td>
+					<td><?php echo $row['Groups2']; $Groups2+=$row['Groups2']; ?></td>
+                </tr>
+            <?php }?>
+            	<tr style="font-weight:bold;">
+                  <td colspan="2" align="right">Total</td>
+					<td><?php echo $CRQ2_Items;?></td>
+					<td><?php echo $Paras2;?></td>
+					<td><?php echo $Groups2;?></td>
+                </tr>
+            </tbody>
+        </table>
+      </div>
+    </div>
+	  
+	  <div class="card">
+		<div class="d-inline-block row" >
+          <h3 class="card-title">&nbsp;&nbsp;&nbsp;&nbsp;	<strong>Pilot Paper Phase-2 - MCQs Paper (Objective)</strong></h3>
+        </div>
+      <div class="card-body">
+		<table id="na_datatable" class="table table-bordered table-striped" width="100%" style="border:double; color:#000">
+          <thead>
+            <tr>
+              <th>Grade</th>
+              <th>Subjects</th>
+              <th>Ph-II Indivisual MCQs</th>
+              <th>Ph-II MCQs Paras</th>
+              <th>Ph-II MCQs in Paras</th>  
+			  <th>Ph-II Versions</th>
+              <th>Ph-II MCQs Papers in Each Versions</th>             
+              <th>Ph-II Total MCQs </th>
+            
+            </tr>
+          </thead>
+            <tbody>
+            <?php			
+			foreach ($paper1 as $row){
+			
+                ?>
+                <tr>
+                  <td><?php echo ($row['p_grade_id']-2);?></td>
+                  <td><?php echo $row['subject_name_en'];?></td>
+                  <td><?php echo $row['p_m_ind_num_mcqs'];?></td>
+                  <td><?php echo $row['p_m_num_paragraphs']; ?></td>
+                  <td><?php echo $row['p_m_num_mcqs_para']; ?></td>
+                  <td><?php echo $row['p_m_versions'];?></td>					
+                <td>
+</div>
+					<?php
+				/************************************************************************/
+			/*****************SKIP FOR URDU AND ENGLISH TEMPORARY****************/
+			/************************************************************************/
+			
+			$arr_eng_urdu = [5,9,13,19,26,32,40,48,4,8,12,18,25,31,39,47];
+			//if(!in_array($row['p_subject_id'],$arr_eng_urdu)) {
+				
+			
+				
+				
+				$ver = explode(",",$row['p_m_versions_distr']);
+				if(isset($ver[0])) { echo '<div class="dropdown"><button class="dropbtn">I('.(substr_count($row['p_m_v1_mcq_ids'],',')+1+$row['p_m_v1_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_1').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key2/'.$row['subject_id'].'_1').'" target="_blank">Answer Key</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary2/'.$row['subject_id'].'_1').'" target="_blank">View Items Summary</a></div></div>';
+					
+					//echo '<div class="dropdown"><button class="dropbtn">I('.(substr_count($row['p_m_v1_mcq_ids'],',')+1+$row['p_m_v1_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_1').'" target="_blank">View Web Paper</a></div></div>';
+				
+				//echo '<div class="dropdown"><button class="dropbtn">I('.(substr_count($row['p_m_v1_mcq_ids'],',')+1+$row['p_m_v1_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_1').'" target="_blank">View Web Paper</a><a href="'.base_url('assets/pilot1_papers/P1_G'.($row['p_grade_id']-2).'_'.$row['subject_code'].'_MCQs_CRP_1.pdf').'" target="_blank">Download PDF</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary/'.$row['subject_id'].'_1').'" target="_blank">View Items Summary</a></div></div>';
+								   }
+				
+				if(isset($ver[1])) { echo ',<div class="dropdown"><button class="dropbtn">II('.(substr_count($row['p_m_v2_mcq_ids'],',')+1+$row['p_m_v2_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_2').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key2/'.$row['subject_id'].'_2').'" target="_blank">Answer Key</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary2/'.$row['subject_id'].'_2').'" target="_blank">View Items Summary</a></div></div>';
+									
+				//echo ' , <div class="dropdown"><button class="dropbtn">II('.(substr_count($row['p_m_v2_mcq_ids'],',')+1+$row['p_m_v2_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_2').'" target="_blank">View Web Paper</a></div></div>';
+				
+				//echo ',<div class="dropdown"><button class="dropbtn">II('.(substr_count($row['p_m_v2_mcq_ids'],',')+1+$row['p_m_v2_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_2').'" target="_blank">View Web Paper</a><a href="'.base_url('assets/pilot1_papers/P1_G'.($row['p_grade_id']-2).'_'.$row['subject_code'].'_MCQs_CRP_2.pdf').'" target="_blank">Download PDF</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary/'.$row['subject_id'].'_2').'" target="_blank">View Items Summary</a></div></div>';
+								   }
+				if(isset($ver[2])) {  echo ',<div class="dropdown"><button class="dropbtn">III('.(substr_count($row['p_m_v3_mcq_ids'],',')+1+$row['p_m_v3_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_3').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key2/'.$row['subject_id'].'_3').'" target="_blank">Answer Key</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary2/'.$row['subject_id'].'_3').'" target="_blank">View Items Summary</a></div></div>'; 
+				
+				//echo ',<div class="dropdown"><button class="dropbtn">III('.(substr_count($row['p_m_v3_mcq_ids'],',')+1+$row['p_m_v3_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_3').'" target="_blank">View Web Paper</a></div></div>'; 
+								   
+				//echo ',<div class="dropdown"><button class="dropbtn">III('.(substr_count($row['p_m_v3_mcq_ids'],',')+1+$row['p_m_v3_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_3').'" target="_blank">View Web Paper</a><a href="'.base_url('assets/pilot1_papers/P1_G'.($row['p_grade_id']-2).'_'.$row['subject_code'].'_MCQs_CRP_3.pdf').'" target="_blank">Download PDF</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary/'.$row['subject_id'].'_3').'" target="_blank">View Items Summary</a></div></div>'; 
+								   }
+				if(isset($ver[3])) { echo ',<div class="dropdown"><button class="dropbtn">IV('.(substr_count($row['p_m_v4_mcq_ids'],',')+1+$row['p_m_v4_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_4').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key2/'.$row['subject_id'].'_4').'" target="_blank">Answer Key</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary2/'.$row['subject_id'].'_4').'" target="_blank">View Items Summary</a></div></div>'; 
+					
+				//echo ',<div class="dropdown"><button class="dropbtn">IV('.(substr_count($row['p_m_v4_mcq_ids'],',')+1+$row['p_m_v4_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_4').'" target="_blank">View Web Paper</a></div></div>';
+								   
+				//echo ',<div class="dropdown"><button class="dropbtn">IV('.(substr_count($row['p_m_v4_mcq_ids'],',')+1+$row['p_m_v4_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_4').'" target="_blank">View Web Paper</a><a href="'.base_url('assets/pilot1_papers/P1_G'.($row['p_grade_id']-2).'_'.$row['subject_code'].'_MCQs_CRP_4.pdf').'" target="_blank">Download PDF</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary/'.$row['subject_id'].'_4').'" target="_blank">View Items Summary</a></div></div>';			   
+								   
+								   }
+				if(isset($ver[4])) {  echo ',<div class="dropdown"><button class="dropbtn">V('.(substr_count($row['p_m_v5_mcq_ids'],',')+1+$row['p_m_v5_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_5').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key2/'.$row['subject_id'].'_5').'" target="_blank">Answer Keys</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary2/'.$row['subject_id'].'_5').'" target="_blank">View Items Summary</a></div></div>';
+					
+				//echo ',<div class="dropdown"><button class="dropbtn">V('.(substr_count($row['p_m_v5_mcq_ids'],',')+1+$row['p_m_v5_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_5').'" target="_blank">View Web Paper</a></div></div>'; 
+								   
+				//echo ',<div class="dropdown"><button class="dropbtn">V('.(substr_count($row['p_m_v5_mcq_ids'],',')+1+$row['p_m_v5_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_5').'" target="_blank">View Web Paper</a><a href="'.base_url('assets/pilot1_papers/P1_G'.($row['p_grade_id']-2).'_'.$row['subject_code'].'_MCQs_CRP_5.pdf').'" target="_blank">Download PDF</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary/'.$row['subject_id'].'_5').'" target="_blank">View Items Summary</a></div></div>';
+								   }
+				
+				if(isset($ver[5])) {  echo ',<div class="dropdown"><button class="dropbtn">VI('.(substr_count($row['p_m_v6_mcq_ids'],',')+1+$row['p_m_v6_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_6').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key2/'.$row['subject_id'].'_6').'" target="_blank">Answer Keys</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary2/'.$row['subject_id'].'_6').'" target="_blank">View Items Summary</a></div></div>'; 
+					
+				//echo ',<div class="dropdown"><button class="dropbtn">VI('.(substr_count($row['p_m_v6_mcq_ids'],',')+1+$row['p_m_v6_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_6').'" target="_blank">View Web Paper</a></div></div>';
+								   
+				//echo ',<div class="dropdown"><button class="dropbtn">VI('.(substr_count($row['p_m_v6_mcq_ids'],',')+1+$row['p_m_v6_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_6').'" target="_blank">View Web Paper</a><a href="'.base_url('assets/pilot1_papers/P1_G'.($row['p_grade_id']-2).'_'.$row['subject_code'].'_MCQs_CRP_6.pdf').'" target="_blank">Download PDF</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary/'.$row['subject_id'].'_6').'" target="_blank">View Items Summary</a></div></div>';
+								   
+								   }
+				if(isset($ver[6])) {  echo ',<div class="dropdown"><button class="dropbtn">VII('.(substr_count($row['p_m_v7_mcq_ids'],',')+1+$row['p_m_v7_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_7').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key2/'.$row['subject_id'].'_7').'" target="_blank">Answer Keys</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary2/'.$row['subject_id'].'_7').'" target="_blank">View Items Summary</a></div></div>'; 
+					
+				//echo ',<div class="dropdown"><button class="dropbtn">VII('.(substr_count($row['p_m_v7_mcq_ids'],',')+1+$row['p_m_v7_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_7').'" target="_blank">View Web Paper</a></div></div>';
+								   
+				//echo ',<div class="dropdown"><button class="dropbtn">VII('.(substr_count($row['p_m_v7_mcq_ids'],',')+1+$row['p_m_v7_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_7').'" target="_blank">View Web Paper</a><a href="'.base_url('assets/pilot1_papers/P1_G'.($row['p_grade_id']-2).'_'.$row['subject_code'].'_MCQs_CRP_7.pdf').'" target="_blank">Download PDF</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary/'.$row['subject_id'].'_7').'" target="_blank">View Items Summary</a></div></div>';
+								   }
+				
+				
+				if(isset($ver[7])) {  echo ',<div class="dropdown"><button class="dropbtn">VIII('.(substr_count($row['p_m_v8_mcq_ids'],',')+1+$row['p_m_v8_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_8').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key2/'.$row['subject_id'].'_8').'" target="_blank">Answer Keys</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary2/'.$row['subject_id'].'_8').'" target="_blank">View Items Summary</a></div></div>'; 
+					
+				//echo ',<div class="dropdown"><button class="dropbtn">VIII('.(substr_count($row['p_m_v8_mcq_ids'],',')+1+$row['p_m_v8_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_8').'" target="_blank">View Web Paper</a></div></div>'; 
+								   
+				//echo ',<div class="dropdown"><button class="dropbtn">VIII('.(substr_count($row['p_m_v8_mcq_ids'],',')+1+$row['p_m_v8_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_8').'" target="_blank">View Web Paper</a><a href="'.base_url('assets/pilot1_papers/P1_G'.($row['p_grade_id']-2).'_'.$row['subject_code'].'_MCQs_CRP_8.pdf').'" target="_blank">Download PDF</a><a href="'.base_url('admin/pilotpaper/piloat_item_sumary/'.$row['subject_id'].'_8').'" target="_blank">View Items Summary</a></div></div>'; 
+								   }
+				
+				
+				
+				if(isset($ver[8])) {  echo ',<div class="dropdown"><button class="dropbtn">IX('.(substr_count($row['p_m_v9_mcq_ids'],',')+1+$row['p_m_v9_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_9').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key2/'.$row['subject_id'].'_9').'" target="_blank">Answer Keys</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary2/'.$row['subject_id'].'_9').'" target="_blank">View Items Summary</a></div></div>'; 
+								   }
+                if(isset($ver[9])) {  echo ',<div class="dropdown"><button class="dropbtn">X('.(substr_count($row['p_m_v10_mcq_ids'],',')+1+$row['p_m_v10_para_count_ids']).') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/generate_paper2/'.$row['subject_id'].'_10').'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/paper_key2/'.$row['subject_id'].'_10').'" target="_blank">Answer Keys</a><a href="'.base_url('admin/pilotpaper/pilot_item_summary2/'.$row['subject_id'].'_10').'" target="_blank">View Items Summary</a></div></div>'; 
+								   }
+				
+			
+					
+						?></td>
+					<td><?php echo $row['p_m_total_mcqs'];?></td>
+                </tr>
+            <?php }?>            	
+            </tbody>
+        </table>
+      </div>
+    </div>
+	  <div class="card" >
+		<div class="d-inline-block row" >
+          <h3 class="card-title">&nbsp;&nbsp;&nbsp;&nbsp;	<strong>Pilot Paper Phase-2 - ERQs Paper (Subjective)</strong></h3>
+        </div>
+      <div class="card-body">
+		<table id="na_datatable" class="table table-bordered table-striped" width="100%" style="border:double; color:#000">
+          <thead>
+            <tr>
+              <th>Grade</th>
+              <th>Subjects</th>
+              <th>Phase II Indivisual ERQs</th>
+              <th>Phase II Groups </th>
+              <th>Phase II Paragraphs</th>              
+              <th>Phase II Total CRQs</th>  
+			  <th>Phase II ERQs Papers </th>
+            </tr>
+          </thead>
+            <tbody>
+            <?php			
+				$para_subjects = [4,8,12,18,25,31,39,47,5,9,13,19,26,32,40,48];
+			foreach ($paper1erq as $row){
+				
+                ?>
+                <tr>
+                  <td><?php echo ($row['c_grade_id']-2);?></td>
+                  <td><?php echo $row['subject_name_en'];?></td>
+                  <td><?php echo $row['c_ind_crq_count'];?></td>
+                  <td><?php echo $row['c_group_count']; ?></td>
+                  <td><?php echo $row['c_para_count']; ?></td>                  
+                  <td><?php echo $row['c_m_total_erq']; ?></td>
+				  <td><?php  
+				
+				if($row['c_group_count']>0)
+				{												
+					 echo '<div class="dropdown"><button class="dropbtn">CRQs/Group ERQs Paper('.$row['c_group_count'].') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/group_erqs_view2/'.$row['subject_id']).'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/group_erqs_view_key2/'.$row['subject_id']).'" target="_blank">Answers / Rubrics</a></div></div>';
+						
+						// echo '<div class="dropdown"><button class="dropbtn">CRQs/ERQs Groups ('.$row['c_group_count'].') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/group_erqs_view2/'.$row['subject_id']).'" target="_blank">View Web Paper</a><a href="'.base_url('assets/pilot2_papers/P2_G'.($row['c_grade_id']-2).'_'.$row['subject_code'].'_CRQs.pdf').'" target="_blank">Download PDF</a></div></div>';					
+				}
+				if($row['c_ind_crq_count']>0) 
+				{
+
+				   echo '<div class="dropdown"><button class="dropbtn">Indi ERQs Paper('.$row['c_ind_crq_count'].') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/indiv_erqs_view2/'.$row['subject_id']).'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/indiv_erqs_view_key2/'.$row['subject_id']).'" target="_blank">Answers / Rubrics</a></div></div>';
+											  
+				}
+				if($row['c_para_count']>0) 
+				{
+
+				   echo '<div class="dropdown"><button class="dropbtn">Paragraphs ERQs Paper('.$row['c_para_count'].') &darr;</button><div class="dropdown-content"><a href="'.base_url('admin/pilotpaper/para_erqs_view2/'.$row['subject_id']).'" target="_blank">View Web Paper</a><a href="'.base_url('admin/pilotpaper/para_erqs_view_key2/'.$row['subject_id']).'" target="_blank">Answers / Para Rubrics</a></div></div>';
+											  
+				}				
+					
+					  ?>
+                  </td>
+                </tr>
+            <?php }?>            	
+            </tbody>
+        </table>
+      </div>
+    </div>
+  </section>  
+</div>
+<!-- DataTables -->
+<script src="<?= base_url() ?>assets/plugins/datatables/jquery.dataTables.js"></script>
+<script src="<?= base_url() ?>assets/plugins/datatables/dataTables.bootstrap4.js"></script>
+<script src="<?= base_url() ?>/assets/notify.js"></script>
